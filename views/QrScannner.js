@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Button, StyleSheet } from "react-native";
-import { BarCodeScanner } from "expo-barcode-scanner";
+import { Camera, CameraView } from "expo-camera";
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -9,7 +9,7 @@ export default function QrScanner() {
 
   useEffect(() => {
     (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -29,9 +29,12 @@ export default function QrScanner() {
 
   return (
     <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+      <CameraView
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr", "ean13", "code128"], // ajusta los tipos que quieras escanear
+        }}
       />
 
       {scanned && (
